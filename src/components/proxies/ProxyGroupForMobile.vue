@@ -3,7 +3,7 @@
     class="group relative h-22 cursor-pointer"
     :data-group-name="proxyGroup.name"
     ref="cardWrapperRef"
-    @click="handlerGroupClick"
+    @click="handlerWrapperClick"
   >
     <div
       v-if="modalMode"
@@ -13,6 +13,7 @@
       class="base-container absolute flex flex-col overflow-hidden transition-[width,transform,max-height] duration-200 ease-out will-change-transform"
       :class="modalMode && blurIntensity < 5 && 'backdrop-blur-sm!'"
       :style="cardStyle"
+      @click.stop="handlerCardClick"
       @contextmenu.prevent.stop="handlerLatencyTest"
       @transitionend="handlerTransitionEnd"
       ref="cardRef"
@@ -226,17 +227,37 @@ const handlerTransitionEnd = (e: TransitionEvent) => {
   }
 }
 
-const handlerGroupClick = async () => {
-  modalMode.value = !modalMode.value
+const updateModalMode = (nextValue: boolean) => {
+  if (modalMode.value === nextValue) {
+    return
+  }
+
+  modalMode.value = nextValue
   disableProxiesPageScroll.value = modalMode.value
 
-  if (modalMode.value) {
+  if (nextValue) {
     displayContent.value = true
   }
   showAllContent.value = false
   contentOpacity.value = 0
 
   calcCardStyle()
+}
+
+const handlerWrapperClick = () => {
+  if (!modalMode.value) {
+    return
+  }
+
+  updateModalMode(false)
+}
+
+const handlerCardClick = () => {
+  if (modalMode.value) {
+    return
+  }
+
+  updateModalMode(true)
 }
 
 const handlerLatencyTest = async () => {

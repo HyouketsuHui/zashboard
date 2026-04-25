@@ -15,6 +15,9 @@
       class="select select-xs min-w-36 max-w-full"
       :value="selectedAlgorithm"
       :disabled="isSwitching || !algorithmOptions.length"
+      @pointerdown.stop
+      @touchstart.stop
+      @touchend.stop
       @click.stop
       @change.stop="handlerSwitchAlgorithm"
     >
