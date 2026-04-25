@@ -4,6 +4,7 @@ import { handlerProxySelect, proxyMap, proxyProviederList } from '@/store/proxie
 import { computed } from 'vue'
 import ProxyNodeCard from './ProxyNodeCard.vue'
 import ProxyNodeGrid from './ProxyNodeGrid.vue'
+import SmartGroupControls from './SmartGroupControls.vue'
 
 const props = defineProps<{
   name: string
@@ -75,6 +76,7 @@ const truncatedProxies = computed(() => {
 
 <template>
   <div class="flex flex-col gap-2">
+    <SmartGroupControls :group-name="name" />
     <div
       v-for="({ providerName, proxies }, index) in truncatedProxies"
       :key="index"

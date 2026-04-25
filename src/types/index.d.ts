@@ -179,7 +179,22 @@ export type SourceIPLabel = {
 
 // smart core
 export interface NodeRank {
-  Name: string
-  Rank: string
-  Weight: number
+  Name?: string
+  Rank?: string | number
+  Weight?: number
+  name?: string
+  rank?: string | number
+  weight?: number
 }
+
+export type SmartGroupAlgorithm =
+  | 'strict-best'
+  | 'weighted-random'
+  | 'least-loaded'
+  | 'fastest-recent'
+  | 'sticky-session'
+  | 'round-robin'
+  | 'weighted-rr'
+  | 'p2c'
+  | 'latency-banded'
+  | 'consistent-hashing'

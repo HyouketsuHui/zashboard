@@ -203,6 +203,8 @@ const zhTW: LANG_MESSAGE = {
   showLog: '顯示日誌',
   hideLogRegex: '隱藏日誌正則',
   hideLogTip: '可通過不區分大小寫的正則表達式來匹配並隱藏不需要看到的日誌',
+  smartAlgorithm: '選路算法',
+  smartHysteresis: '防抖',
   loadBalance: '負載均衡',
   label: '標籤',
   optional: '可選',

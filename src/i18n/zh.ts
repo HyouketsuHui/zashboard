@@ -203,6 +203,8 @@ const zh: LANG_MESSAGE = {
   showLog: '显示日志',
   hideLogRegex: '隐藏日志正则',
   hideLogTip: '可通过不区分大小写的正则表达式来匹配并隐藏不需要看到的日志',
+  smartAlgorithm: '选路算法',
+  smartHysteresis: '防抖',
   loadBalance: '负载均衡',
   label: '标签',
   optional: '可选',

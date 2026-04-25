@@ -207,6 +207,8 @@ const ru: LANG_MESSAGE = {
   hideLogRegex: 'Скрыть журнал Regex',
   hideLogTip:
     'Используйте регистронезависимое регулярное выражение, чтобы найти и скрыть нежелательные записи журнала.',
+  smartAlgorithm: 'Algorithm',
+  smartHysteresis: 'Hysteresis',
   loadBalance: 'Балансировка нагрузки',
   label: 'Метка',
   optional: 'Необязательно',

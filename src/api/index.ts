@@ -13,6 +13,7 @@ import type {
   ProxyProvider,
   Rule,
   RuleProvider,
+  SmartGroupAlgorithm,
 } from '@/types'
 import axios, { AxiosError } from 'axios'
 import { debounce } from 'lodash'
@@ -65,6 +66,8 @@ export const fetchVersionAPI = () => {
   return axios.get<{ version: string }>('/version')
 }
 export const isSingBox = computed(() => version.value?.includes('sing-box'))
+export const isXiaoba = computed(() => /xiaoba/i.test(version.value ?? ''))
+export const isSmartGroupFeatureSupported = computed(() => isSingBox.value || isXiaoba.value)
 export const mihomo = computed<[MIHOMO, string] | undefined>(() => {
   if (isSingBox.value) return undefined
   else {
@@ -139,8 +142,34 @@ export const fetchSmartWeightsAPI = () => {
   }>(`/group/weights`)
 }
 
-// deprecated
 export const fetchSmartGroupWeightsAPI = (proxyName: string) => {
+  return axios.get<
+    | {
+        message: string
+        weights: NodeRank[]
+      }
+    | NodeRank[]
+  >(`/proxies/${encodeURIComponent(proxyName)}/weights`)
+}
+
+export const fetchSmartGroupInfoAPI = (proxyName: string) => {
+  return axios.get<{
+    algorithm?: SmartGroupAlgorithm | string
+    hysteresis?: unknown
+    policyPriority?: unknown
+    now?: string
+  }>(`/proxies/${encodeURIComponent(proxyName)}`)
+}
+
+export const updateSmartGroupAlgorithmAPI = (
+  proxyName: string,
+  algorithm: SmartGroupAlgorithm | string,
+) => {
+  return axios.put(`/smart/groups/${encodeURIComponent(proxyName)}/algorithm`, { algorithm })
+}
+
+// deprecated
+export const fetchSmartGroupWeightsLegacyAPI = (proxyName: string) => {
   return axios.get<{
     message: string
     weights: NodeRank[]

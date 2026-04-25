@@ -4,6 +4,7 @@ import { handlerProxySelect } from '@/store/proxies'
 import { computed } from 'vue'
 import ProxyNodeCard from './ProxyNodeCard.vue'
 import ProxyNodeGrid from './ProxyNodeGrid.vue'
+import SmartGroupControls from './SmartGroupControls.vue'
 
 const props = defineProps<{
   name: string
@@ -19,14 +20,17 @@ const proxies = computed(() => props.renderProxies.slice(0, maxProxies.value))
 </script>
 
 <template>
-  <ProxyNodeGrid>
-    <ProxyNodeCard
-      v-for="node in proxies"
-      :key="node"
-      :name="node"
-      :group-name="name"
-      :active="node === now"
-      @click.stop="handlerProxySelect(name, node)"
-    />
-  </ProxyNodeGrid>
+  <div class="flex flex-col gap-2">
+    <SmartGroupControls :group-name="name" />
+    <ProxyNodeGrid>
+      <ProxyNodeCard
+        v-for="node in proxies"
+        :key="node"
+        :name="node"
+        :group-name="name"
+        :active="node === now"
+        @click.stop="handlerProxySelect(name, node)"
+      />
+    </ProxyNodeGrid>
+  </div>
 </template>

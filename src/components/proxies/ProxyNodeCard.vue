@@ -85,7 +85,8 @@ const isSmallCard = computed(() => proxyCardSize.value === PROXY_CARD_SIZE.SMALL
 const typeDescription = computed(() => {
   const type = typeFormatter(node.value.type)
   const smartUsage = smartWeightsMap.value[props.groupName ?? '']?.[props.name]
-  const smartDesc = smartUsage ? t(smartUsage) : ''
+  const translatedSmartUsage = smartUsage ? t(smartUsage) : ''
+  const smartDesc = smartUsage ? (translatedSmartUsage === smartUsage ? smartUsage : translatedSmartUsage) : ''
   const isV6 = IPv6test.value && getIPv6ByName(node.value.name) ? 'IPv6' : ''
   const isUDP = node.value.udp ? (node.value.xudp ? 'xudp' : 'udp') : ''
 
