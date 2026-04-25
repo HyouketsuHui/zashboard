@@ -205,6 +205,8 @@ const zh: LANG_MESSAGE = {
   hideLogTip: '可通过不区分大小写的正则表达式来匹配并隐藏不需要看到的日志',
   smartAlgorithm: '选路算法',
   smartHysteresis: '防抖',
+  switchSmartAlgorithmSuccess: '选路算法切换成功：{algorithm}',
+  switchSmartAlgorithmFailed: '选路算法切换失败',
   loadBalance: '负载均衡',
   label: '标签',
   optional: '可选',

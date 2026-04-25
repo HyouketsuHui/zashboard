@@ -206,6 +206,8 @@ const en = {
   hideLogTip: 'You can use case-insensitive regular expressions to match and hide unwanted logs.',
   smartAlgorithm: 'Algorithm',
   smartHysteresis: 'Hysteresis',
+  switchSmartAlgorithmSuccess: 'Algorithm switched successfully: {algorithm}',
+  switchSmartAlgorithmFailed: 'Failed to switch algorithm',
   loadBalance: 'Load balancing',
   label: 'Label',
   optional: 'Optional',

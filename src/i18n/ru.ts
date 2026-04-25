@@ -209,6 +209,8 @@ const ru: LANG_MESSAGE = {
     'Используйте регистронезависимое регулярное выражение, чтобы найти и скрыть нежелательные записи журнала.',
   smartAlgorithm: 'Algorithm',
   smartHysteresis: 'Hysteresis',
+  switchSmartAlgorithmSuccess: 'Algorithm switched successfully: {algorithm}',
+  switchSmartAlgorithmFailed: 'Failed to switch algorithm',
   loadBalance: 'Балансировка нагрузки',
   label: 'Метка',
   optional: 'Необязательно',

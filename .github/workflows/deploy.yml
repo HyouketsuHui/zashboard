@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - main
+  workflow_dispatch:
 
 permissions:
   contents: write
@@ -11,23 +12,50 @@ permissions:
 
   packages: write
 jobs:
-  release-please:
+  prepare-release:
     runs-on: ubuntu-latest
     outputs:
-      release_created: ${{ steps.release.outputs.release_created }}
-      tag_name: ${{ steps.release.outputs.tag_name }}
+      release_created: ${{ steps.prepare.outputs.release_created }}
+      tag_name: ${{ steps.prepare.outputs.tag_name }}
+      upstream_tag: ${{ steps.prepare.outputs.upstream_tag }}
 
     steps:
-      - name: release-please
-        id: release
-        uses: googleapis/release-please-action@v4
-        with:
-          token: ${{ github.token }}
-          release-type: node
-          target-branch: main
+      - name: Prepare release tag from upstream version
+        id: prepare
+        env:
+          GH_TOKEN: ${{ github.token }}
+          UPSTREAM_REPO: Zephyruso/zashboard
+          RELEASE_SUFFIX: -cryingbox
+        run: |
+          set -euo pipefail
+
+          upstream_tag="$(curl -fsSL "https://api.github.com/repos/${UPSTREAM_REPO}/releases/latest" | jq -r '.tag_name')"
+          if [ -z "${upstream_tag}" ] || [ "${upstream_tag}" = "null" ]; then
+            echo "Failed to fetch upstream tag name from ${UPSTREAM_REPO}" >&2
+            exit 1
+          fi
+
+          tag_name="${upstream_tag}${RELEASE_SUFFIX}"
+          echo "upstream_tag=${upstream_tag}" >> "$GITHUB_OUTPUT"
+          echo "tag_name=${tag_name}" >> "$GITHUB_OUTPUT"
+
+          release_status="$(
+            curl -s -o /dev/null -w "%{http_code}" \
+              -H "Authorization: Bearer ${GH_TOKEN}" \
+              -H "Accept: application/vnd.github+json" \
+              "https://api.github.com/repos/${GITHUB_REPOSITORY}/releases/tags/${tag_name}"
+          )"
+
+          if [ "${release_status}" = "200" ]; then
+            echo "release_created=false" >> "$GITHUB_OUTPUT"
+            echo "Release ${tag_name} already exists. Skip release jobs."
+          else
+            echo "release_created=true" >> "$GITHUB_OUTPUT"
+            echo "Will publish release ${tag_name}."
+          fi
 
   build-and-deploy:
-    needs: release-please
+    needs: prepare-release
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -47,7 +75,7 @@ jobs:
           publish_dir: ./dist
 
   build-and-deploy-cdn-fonts:
-    needs: release-please
+    needs: prepare-release
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -68,7 +96,7 @@ jobs:
           publish_branch: gh-pages-cdn-fonts
 
   build-and-deploy-firasans-only:
-    needs: release-please
+    needs: prepare-release
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -89,7 +117,7 @@ jobs:
           publish_branch: gh-pages-firasans-only
 
   build-and-deploy-misans-only:
-    needs: release-please
+    needs: prepare-release
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -110,7 +138,7 @@ jobs:
           publish_branch: gh-pages-misans-only
 
   build-and-deploy-pingfang-only:
-    needs: release-please
+    needs: prepare-release
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -131,7 +159,7 @@ jobs:
           publish_branch: gh-pages-pingfang-only
 
   build-and-deploy-sarasa-only:
-    needs: release-please
+    needs: prepare-release
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -152,7 +180,7 @@ jobs:
           publish_branch: gh-pages-sarasa-only
 
   build-and-deploy-no-fonts:
-    needs: release-please
+    needs: prepare-release
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -173,9 +201,9 @@ jobs:
           publish_branch: gh-pages-no-fonts
 
   release-dist:
-    needs: release-please
+    needs: prepare-release
     runs-on: ubuntu-latest
-    if: ${{ needs.release-please.outputs.release_created }}
+    if: ${{ needs.prepare-release.outputs.release_created == 'true' }}
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -206,12 +234,17 @@ jobs:
         uses: softprops/action-gh-release@v2
         with:
           files: dist*.zip
-          tag_name: ${{ needs.release-please.outputs.tag_name }}
+          tag_name: ${{ needs.prepare-release.outputs.tag_name }}
+          name: ${{ needs.prepare-release.outputs.tag_name }}
+          generate_release_notes: true
+          body: |
+            Upstream version: ${{ needs.prepare-release.outputs.upstream_tag }}
+            Variant: cryingbox kernel support
 
   release-image:
-    needs: release-please
+    needs: prepare-release
     runs-on: ubuntu-latest
-    if: ${{ needs.release-please.outputs.release_created }}
+    if: ${{ needs.prepare-release.outputs.release_created == 'true' }}
     steps:
       - uses: actions/checkout@v4
 
@@ -239,6 +272,6 @@ jobs:
           push: true
           tags: |
             ghcr.io/zephyruso/zashboard:latest
-            ghcr.io/zephyruso/zashboard:${{ needs.release-please.outputs.tag_name }}
+            ghcr.io/zephyruso/zashboard:${{ needs.prepare-release.outputs.tag_name }}
           cache-from: type=gha
           cache-to: type=gha,mode=max

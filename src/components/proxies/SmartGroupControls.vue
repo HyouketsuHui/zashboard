@@ -39,6 +39,7 @@
 <script setup lang="ts">
 import { isSmartGroupFeatureSupported } from '@/api'
 import { PROXY_TYPE } from '@/constant'
+import { showNotification } from '@/helper/notification'
 import { proxyMap } from '@/store/proxies'
 import {
   SMART_GROUP_ALGORITHMS,
@@ -103,6 +104,16 @@ const handlerSwitchAlgorithm = async (e: Event) => {
 
   try {
     await switchSmartGroupAlgorithm(props.groupName, algorithm)
+    showNotification({
+      content: 'switchSmartAlgorithmSuccess',
+      params: { algorithm },
+      type: 'alert-success',
+    })
+  } catch {
+    showNotification({
+      content: 'switchSmartAlgorithmFailed',
+      type: 'alert-error',
+    })
   } finally {
     isSwitching.value = false
     selectedAlgorithm.value = smartAlgorithmMap.value[props.groupName] ?? ''
