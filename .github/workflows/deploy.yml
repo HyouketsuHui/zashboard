@@ -9,6 +9,7 @@ permissions:
   contents: write
   pull-requests: write
 
+  packages: write
 jobs:
   release-please:
     runs-on: ubuntu-latest
@@ -21,7 +22,7 @@ jobs:
         id: release
         uses: googleapis/release-please-action@v4
         with:
-          token: ${{ secrets.PAT }}
+          token: ${{ github.token }}
           release-type: node
           target-branch: main
 
@@ -42,7 +43,7 @@ jobs:
       - name: Deploy 🚀
         uses: peaceiris/actions-gh-pages@v4
         with:
-          github_token: ${{ secrets.PAT }}
+          github_token: ${{ github.token }}
           publish_dir: ./dist
 
   build-and-deploy-cdn-fonts:
@@ -62,7 +63,7 @@ jobs:
       - name: Deploy to gh-pages-cdn-fonts 🚀
         uses: peaceiris/actions-gh-pages@v4
         with:
-          github_token: ${{ secrets.PAT }}
+          github_token: ${{ github.token }}
           publish_dir: ./dist
           publish_branch: gh-pages-cdn-fonts
 
@@ -83,7 +84,7 @@ jobs:
       - name: Deploy to gh-pages-firasans-only 🚀
         uses: peaceiris/actions-gh-pages@v4
         with:
-          github_token: ${{ secrets.PAT }}
+          github_token: ${{ github.token }}
           publish_dir: ./dist
           publish_branch: gh-pages-firasans-only
 
@@ -104,7 +105,7 @@ jobs:
       - name: Deploy to gh-pages-misans-only 🚀
         uses: peaceiris/actions-gh-pages@v4
         with:
-          github_token: ${{ secrets.PAT }}
+          github_token: ${{ github.token }}
           publish_dir: ./dist
           publish_branch: gh-pages-misans-only
 
@@ -125,7 +126,7 @@ jobs:
       - name: Deploy to gh-pages-pingfang-only 🚀
         uses: peaceiris/actions-gh-pages@v4
         with:
-          github_token: ${{ secrets.PAT }}
+          github_token: ${{ github.token }}
           publish_dir: ./dist
           publish_branch: gh-pages-pingfang-only
 
@@ -146,7 +147,7 @@ jobs:
       - name: Deploy to gh-pages-sarasa-only 🚀
         uses: peaceiris/actions-gh-pages@v4
         with:
-          github_token: ${{ secrets.PAT }}
+          github_token: ${{ github.token }}
           publish_dir: ./dist
           publish_branch: gh-pages-sarasa-only
 
@@ -167,7 +168,7 @@ jobs:
       - name: Deploy to gh-pages-no-fonts 🚀
         uses: peaceiris/actions-gh-pages@v4
         with:
-          github_token: ${{ secrets.PAT }}
+          github_token: ${{ github.token }}
           publish_dir: ./dist
           publish_branch: gh-pages-no-fonts
 
@@ -226,7 +227,7 @@ jobs:
         with:
           registry: ghcr.io
           username: ${{ github.actor }}
-          password: ${{ secrets.PAT }}
+          password: ${{ github.token }}
 
       - name: build and publish ghcr.io docker image
         uses: docker/build-push-action@v6
